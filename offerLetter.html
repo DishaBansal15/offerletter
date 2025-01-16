@@ -54,73 +54,120 @@
             const type = document.getElementById('type').value;
             const signatureFile = document.getElementById('signature').files[0];
 
-            const offerContent = `
-                      CENTENNIAL INFOTECH PRIVATE LIMITED
-                                CIN-U62099PB2024PTC061715
-                        P.no. C 124, PH-8, Sohana, S.A.S.Nagar (Mohali), Rupnagar140308, Punjab
-                        EMAIL-info@centennialinfotech.com, CONTACT+918146511568
-
-                                            Offer Letter
-
-        Date: ${new Date().toLocaleDateString()}
-        Dear ${name},
-        Congratulations! We are pleased to confirm that you have been selected to work for Centennial InfoTech and are delighted to offer this Internship.
-
-        This position we offer you is ${position}. And this position reports to ${reportTo}. On your acceptance of this offer letter, you will be required to join the organization from ${startDate}.
-
-        I would like to inform you that the duration of this internship will be ${duration} (${type}) and it will be an unpaid internship. During this time, your internship status with Centennial InfoTech Pvt. Ltd. will be temporary and therefore, you will not be entitled for any kind of privileges.
- 
-        This internship will offer flexible working hours. However, it is mandatory to fulfill a minimum of 4 hours per day for part-time interns and 8 hours per day for full-time interns. Any hours missed due to absences must be completed before the conclusion of your internship. Please note that completing the required hours is a prerequisite for receiving both the experience letter and the letter of recommendation, ensuring your eligibility for these important documents upon successful completion of the program.
-
-        During your internship, you will get access to different kinds of confidential information about the company and by accepting this offer letter, you agree that you will take complete care in maintaining the confidentiality of all the information you come across and by any means, you will not be using it for any kind of personal benefits or reasons other than work-related tasks. 
-
-        On completion of your internship, you will be required to handover all the official documents and other company possessions that will be given to you during your internship.
-
-        By accepting this offer letter, you agree to all the terms and conditions that have been mentioned above and you agree that you will be following all the rules and regulations at the company and you will also be observing all the practices and policies that define the working and conduct at the company.
-
-        Best Regards,
-        ${reportTo}
-        HR Department
-      `;
-
+            // Header Section
             doc.setFont("helvetica", "bold");
-            doc.setFontSize(15);
-            doc.setTextColor(0, 0, 255);
-            doc.text("CENTENNIAL INFOTECH PRIVATE LIMITED", 10, 10);
+            doc.setFontSize(14);
+            doc.setTextColor(0, 0, 128); // Dark blue color
+            doc.text("CENTENNIAL INFOTECH PRIVATE LIMITED", 105, 20, { align: "center" });
 
             doc.setFontSize(10);
-            doc.setTextColor(0, 0, 0);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(0, 0, 0); // Black color
+            doc.text("CIN-U62099PB2024PTC061715", 105, 25, { align: "center" });
+            doc.text(
+                "P.no. C 124, PH-8, Sohana, S.A.S.Nagar (Mohali), Rupnagar140308, Punjab",
+                105,
+                30,
+                { align: "center" }
+            );
+            doc.text("EMAIL-info@centennialinfotech.com, CONTACT+918146511568", 105, 35, { align: "center" });
 
-            const lines = doc.splitTextToSize(offerContent, 180);
-            let y = 15;
+            // Offer Letter Title
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(0, 0, 0); // Red color
+            doc.text("Offer Letter", 105, 45, { align: "center" });
 
-            lines.forEach(line => {
-                if (y > 270) {
-                    doc.addPage();
-                    y = 10;
-                }
+            // Main Content
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(0, 0, 0); // Reset to black
 
-                if (line.includes(name) || line.includes(position) || line.includes(reportTo) || line.includes(startDate) || line.includes(duration) || line.includes(type)) {
-                    doc.setFont("helvetica", "bold");
-                } else {
-                    doc.setFont("helvetica", "normal");
-                }
-                doc.text(line, 10, y);
-                y += 7;
+            const content = [
+                `Date: ${new Date().toLocaleDateString()}`,
+                `Dear ${name},`,
+                "Congratulations! We are pleased to confirm that you have been selected to work for Centennial InfoTech and are delighted to offer this Internship.",
+                `This position we offer you is ${position}. And this position reports to ${reportTo}. On your acceptance of this offer letter, you will be required to join the organization from ${startDate}.`,
+                `I would like to inform you that the duration of this internship will be ${duration} (${type}) and it will be an unpaid internship. During this time, your internship status with Centennial InfoTech Pvt. Ltd. will be temporary and therefore, you will not be entitled for any kind of privileges.`,
+                "This internship will offer flexible working hours. However, it is mandatory to fulfill a minimum of 4 hours per day for part-time interns and 8 hours per day for full-time interns. Any hours missed due to absences must be completed before the conclusion of your internship.",
+                "Please note that completing the required hours is a prerequisite for receiving both the experience letter and the letter of recommendation, ensuring your eligibility for these important documents upon successful completion of the program.",
+                "During your internship, you will get access to different kinds of confidential information about the company, and by accepting this offer letter, you agree that you will take complete care in maintaining confidentiality.",
+                "On completion of your internship, you will be required to hand over all the official documents and other company possessions that will be given to you during your internship.",
+                "By accepting this offer letter, you agree to all the terms and conditions mentioned above.",
+            ];
+
+            let y = 55;
+            const lineHeight = 7;
+
+            content.forEach((line) => {
+                const words = line.split(" "); // Split the line into individual words
+                let currentX = 15; // Starting X position for text
+                const maxWidth = 180;
+
+                words.forEach((word) => {
+                    // Check if the word matches any of the dynamic content to be bold
+                    if (word.includes(name) || word.includes(position) || word.includes(reportTo) || word.includes(startDate) || word.includes(duration) || word.includes(type)) {
+                        doc.setFont("helvetica", "bold");
+                    } else {
+                        doc.setFont("helvetica", "normal");
+                    }
+
+                    // Measure the width of the word
+                    const wordWidth = doc.getTextWidth(word + " ");
+
+                    // Wrap to a new line if the current line exceeds the max width
+                    if (currentX + wordWidth > maxWidth) {
+                        y += lineHeight;
+                        currentX = 15; // Reset X position for the new line
+                        if (y > 280) {
+                            doc.addPage();
+                            y = 10;
+                        }
+                    }
+
+                    // Render the word
+                    doc.text(word, currentX, y);
+                    currentX += wordWidth; // Move the X position for the next word
+                });
+
+                // Move to the next line after processing the current line
+                y += lineHeight;
             });
+
+            // Best Regards, followed by signature image and other details
+            doc.text("Best Regards,", 15, y);
+            y += lineHeight;
 
             if (signatureFile) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     const imgData = e.target.result;
-                    doc.addImage(imgData, 'PNG', 10, y + 1, 40, 15);
+                    doc.addImage(imgData, 'PNG', 15, y + 5, 40, 20);
+                    y += 30; // Adjust for signature image space
+                    // Report To, HR Department, and Company Address
+                    doc.text(reportTo, 15, y);
+                    y += lineHeight;
+                    doc.text("HR Department", 15, y);
+                    y += lineHeight;
+                    doc.text("Centennial Infotech", 15, y);
+                    y += lineHeight;
+                    doc.text("C-124, Second Floor, VIII, Phase-8, Industrial Area, Sector 73", 15, y);
                     doc.save(`${name}_Offer_Letter.pdf`);
                 };
                 reader.readAsDataURL(signatureFile);
             } else {
+                y += 20; // Adjust space for signature section
+                doc.text(reportTo, 15, y);
+                y += lineHeight;
+                doc.text("HR Department", 15, y);
+                y += lineHeight;
+                doc.text("Centennial Infotech", 15, y);
+                y += lineHeight;
+                doc.text("C-124, Second Floor, VIII, Phase-8, Industrial Area, Sector 73", 15, y);
                 doc.save(`${name}_Offer_Letter.pdf`);
             }
         }
+
     </script>
 </body>
 
